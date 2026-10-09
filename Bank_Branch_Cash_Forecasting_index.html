@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bank Branch Cash Forecasting Tool</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+<header class="bg-indigo-950 text-white shadow-lg">
+  <div class="max-w-7xl mx-auto px-5 py-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <h1 class="text-3xl font-bold">Bank Branch Cash Forecasting Tool</h1>
+        <p class="text-indigo-200 mt-1">Cash demand analysis and Random Forest forecasting</p>
+      </div>
+      <span class="bg-indigo-800 px-4 py-2 rounded-full text-sm font-semibold">180 Historical Days</span>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-5 py-8 space-y-8">
+
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+  <div class="bg-white rounded-xl shadow-sm border-l-4 border-indigo-500 p-5">
+    <p class="text-sm text-slate-500">Average Cash Demand</p>
+    <p class="text-2xl font-bold mt-2">₹867,231.94</p>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border-l-4 border-blue-500 p-5">
+    <p class="text-sm text-slate-500">Average ATM Cash</p>
+    <p class="text-2xl font-bold mt-2">₹283,426.37</p>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border-l-4 border-purple-500 p-5">
+    <p class="text-sm text-slate-500">Average Teller Cash</p>
+    <p class="text-2xl font-bold mt-2">₹583,805.66</p>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border-l-4 border-emerald-500 p-5">
+    <p class="text-sm text-slate-500">Average Deposits</p>
+    <p class="text-2xl font-bold mt-2">₹600,954.93</p>
+  </div>
+</section>
+
+<section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <div>
+      <h2 class="text-xl font-bold">Final Cash Recommendation</h2>
+      <p class="text-slate-500 text-sm mt-1">Output of the Random Forest forecasting model</p>
+    </div>
+    <div class="text-3xl font-extrabold text-emerald-600">₹925,818.69</div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+    <div class="bg-indigo-50 rounded-lg p-5">
+      <p class="text-sm text-slate-500">Average Predicted Demand</p>
+      <p class="text-2xl font-bold text-indigo-700 mt-1">₹841,653.35</p>
+    </div>
+    <div class="bg-amber-50 rounded-lg p-5">
+      <p class="text-sm text-slate-500">Safety Reserve (10%)</p>
+      <p class="text-2xl font-bold text-amber-700 mt-1">₹84,165.34</p>
+    </div>
+    <div class="bg-emerald-50 rounded-lg p-5">
+      <p class="text-sm text-slate-500">Recommended Currency Chest Cash</p>
+      <p class="text-2xl font-bold text-emerald-700 mt-1">₹925,818.69</p>
+    </div>
+  </div>
+</section>
+
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+    <h2 class="text-lg font-bold mb-1">Model Performance</h2>
+    <p class="text-sm text-slate-500 mb-5">Test set: 35 samples</p>
+    <div class="space-y-4">
+      <div class="flex justify-between border-b pb-3"><span>MAE</span><strong>₹16,507.24</strong></div>
+      <div class="flex justify-between border-b pb-3"><span>RMSE</span><strong>₹27,840.61</strong></div>
+      <div class="flex justify-between"><span>Training samples</span><strong>139</strong></div>
+    </div>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+    <h2 class="text-lg font-bold mb-1">Demand Factors</h2>
+    <p class="text-sm text-slate-500 mb-5">Average cash demand by condition</p>
+    <div class="space-y-4">
+      <div class="flex justify-between border-b pb-3"><span>Normal days</span><strong>₹824,512.85</strong></div>
+      <div class="flex justify-between border-b pb-3"><span>Salary days</span><strong>₹1,038,108.33</strong></div>
+      <div class="flex justify-between border-b pb-3"><span>Normal weeks</span><strong>₹845,773.63</strong></div>
+      <div class="flex justify-between"><span>Festival weeks</span><strong>₹1,121,666.21</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+  <h2 class="text-lg font-bold mb-1">Daily Cash Demand</h2>
+  <p class="text-sm text-slate-500 mb-4">Historical demand over the 180-day period</p>
+  <div class="h-80"><canvas id="demandChart"></canvas></div>
+</section>
+
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+    <h2 class="text-lg font-bold mb-4">ATM vs Teller Cash</h2>
+    <div class="h-72"><canvas id="cashChart"></canvas></div>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+    <h2 class="text-lg font-bold mb-4">Feature Importance</h2>
+    <div class="h-72"><canvas id="featureChart"></canvas></div>
+  </div>
+</section>
+
+<section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+  <div class="p-6 border-b">
+    <h2 class="text-lg font-bold">Project Summary</h2>
+    <p class="text-sm text-slate-500 mt-1">Random Forest Regressor with 9 input features</p>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-100 text-slate-600">
+        <tr>
+          <th class="text-left p-4">Metric</th><th class="text-left p-4">Result</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        <tr><td class="p-4">Historical records</td><td class="p-4 font-semibold">180 days</td></tr>
+        <tr><td class="p-4">Features</td><td class="p-4 font-semibold">9</td></tr>
+        <tr><td class="p-4">Training / testing</td><td class="p-4 font-semibold">139 / 35</td></tr>
+        <tr><td class="p-4">MAE</td><td class="p-4 font-semibold">₹16,507.24</td></tr>
+        <tr><td class="p-4">RMSE</td><td class="p-4 font-semibold">₹27,840.61</td></tr>
+        <tr><td class="p-4">Predicted average demand</td><td class="p-4 font-semibold">₹841,653.35</td></tr>
+        <tr><td class="p-4">Safety reserve</td><td class="p-4 font-semibold">₹84,165.34</td></tr>
+        <tr><td class="p-4">Recommended cash</td><td class="p-4 font-bold text-emerald-600">₹925,818.69</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="bg-indigo-950 text-white rounded-xl p-6">
+  <h2 class="text-xl font-bold">Global Result</h2>
+  <p class="text-indigo-100 mt-2 leading-relaxed">
+    The Random Forest model forecasts an average cash demand of <strong>₹841,653.35</strong>.
+    Adding a 10% safety reserve of <strong>₹84,165.34</strong> gives a recommended
+    Currency Chest cash level of <strong>₹925,818.69</strong>.
+  </p>
+</section>
+
+</main>
+
+<footer class="text-center text-slate-500 text-sm py-6">
+  Bank Branch Cash Forecasting Tool • Based on the 180-day Python/Pandas model
+</footer>
+
+<script>
+const dataset = [{"date":"2026-01-01","demand":1039606,"atm":290348,"teller":749258,"deposits":518178,"salary":1,"festival":0},{"date":"2026-01-02","demand":1063408,"atm":381091,"teller":682317,"deposits":809239,"salary":1,"festival":0},{"date":"2026-01-03","demand":1057723,"atm":308978,"teller":748745,"deposits":499398,"salary":1,"festival":0},{"date":"2026-01-04","demand":982764,"atm":249275,"teller":733488,"deposits":478581,"salary":0,"festival":0},{"date":"2026-01-05","demand":771902,"atm":267712,"teller":504190,"deposits":715811,"salary":0,"festival":0},{"date":"2026-01-06","demand":771904,"atm":213483,"teller":558421,"deposits":679166,"salary":0,"festival":0},{"date":"2026-01-07","demand":989506,"atm":386965,"teller":602541,"deposits":662412,"salary":0,"festival":0},{"date":"2026-01-08","demand":892092,"atm":350672,"teller":541420,"deposits":662835,"salary":0,"festival":0},{"date":"2026-01-09","demand":843663,"atm":326691,"teller":516972,"deposits":598775,"salary":0,"festival":0},{"date":"2026-01-10","demand":865107,"atm":264311,"teller":600796,"deposits":510275,"salary":0,"festival":0},{"date":"2026-01-11","demand":744390,"atm":187823,"teller":556567,"deposits":607580,"salary":0,"festival":0},{"date":"2026-01-12","demand":744112,"atm":289644,"teller":454468,"deposits":532284,"salary":0,"festival":0},{"date":"2026-01-13","demand":829035,"atm":260506,"teller":568530,"deposits":697512,"salary":0,"festival":0},{"date":"2026-01-14","demand":570406,"atm":225310,"teller":345097,"deposits":585294,"salary":0,"festival":0},{"date":"2026-01-15","demand":593010,"atm":233968,"teller":359042,"deposits":517450,"salary":0,"festival":0},{"date":"2026-01-16","demand":832525,"atm":314654,"teller":517871,"deposits":567861,"salary":0,"festival":0},{"date":"2026-01-17","demand":678460,"atm":199581,"teller":478879,"deposits":641293,"salary":0,"festival":0},{"date":"2026-01-18","demand":837710,"atm":257817,"teller":579892,"deposits":543628,"salary":0,"festival":0},{"date":"2026-01-19","demand":691037,"atm":260984,"teller":430053,"deposits":517778,"salary":0,"festival":0},{"date":"2026-01-20","demand":630524,"atm":187605,"teller":442919,"deposits":624369,"salary":0,"festival":0},{"date":"2026-01-21","demand":975878,"atm":268780,"teller":707098,"deposits":624497,"salary":0,"festival":0},{"date":"2026-01-22","demand":772907,"atm":257780,"teller":515127,"deposits":549306,"salary":0,"festival":0},{"date":"2026-01-23","demand":908103,"atm":354545,"teller":553559,"deposits":552896,"salary":0,"festival":0},{"date":"2026-01-24","demand":629030,"atm":222931,"teller":406099,"deposits":623205,"salary":0,"festival":0},{"date":"2026-01-25","demand":734674,"atm":246490,"teller":488184,"deposits":455192,"salary":0,"festival":0},{"date":"2026-01-26","demand":813311,"atm":215183,"teller":598128,"deposits":459254,"salary":0,"festival":0},{"date":"2026-01-27","demand":661881,"atm":226529,"teller":435351,"deposits":528156,"salary":0,"festival":0},{"date":"2026-01-28","demand":1025084,"atm":408504,"teller":616580,"deposits":578655,"salary":1,"festival":0},{"date":"2026-01-29","demand":907923,"atm":246059,"teller":661865,"deposits":631091,"salary":1,"festival":0},{"date":"2026-01-30","demand":1044997,"atm":342497,"teller":702500,"deposits":747536,"salary":1,"festival":0},{"date":"2026-01-31","demand":907795,"atm":346420,"teller":561375,"deposits":685766,"salary":1,"festival":0},{"date":"2026-02-01","demand":1202273,"atm":434159,"teller":768114,"deposits":584006,"salary":1,"festival":0},{"date":"2026-02-02","demand":978380,"atm":346887,"teller":631493,"deposits":598098,"salary":1,"festival":0},{"date":"2026-02-03","demand":853075,"atm":303159,"teller":549915,"deposits":499747,"salary":1,"festival":0},{"date":"2026-02-04","demand":898705,"atm":273138,"teller":625568,"deposits":598149,"salary":0,"festival":0},{"date":"2026-02-05","demand":653499,"atm":192154,"teller":461345,"deposits":571134,"salary":0,"festival":0},{"date":"2026-02-06","demand":925064,"atm":343572,"teller":581491,"deposits":632272,"salary":0,"festival":0},{"date":"2026-02-07","demand":564840,"atm":209848,"teller":354992,"deposits":517277,"salary":0,"festival":0},{"date":"2026-02-08","demand":640618,"atm":243474,"teller":397144,"deposits":651935,"salary":0,"festival":0},{"date":"2026-02-09","demand":823623,"atm":318731,"teller":504893,"deposits":753274,"salary":0,"festival":0},{"date":"2026-02-10","demand":888616,"atm":290312,"teller":598304,"deposits":589124,"salary":0,"festival":0},{"date":"2026-02-11","demand":820564,"atm":266870,"teller":553694,"deposits":640171,"salary":0,"festival":0},{"date":"2026-02-12","demand":786122,"atm":290664,"teller":495458,"deposits":669014,"salary":0,"festival":0},{"date":"2026-02-13","demand":863868,"atm":300189,"teller":563678,"deposits":559878,"salary":0,"festival":0},{"date":"2026-02-14","demand":622577,"atm":221199,"teller":401379,"deposits":622409,"salary":0,"festival":0},{"date":"2026-02-15","demand":713619,"atm":263589,"teller":450030,"deposits":601259,"salary":0,"festival":0},{"date":"2026-02-16","demand":744723,"atm":285602,"teller":459121,"deposits":609768,"salary":0,"festival":0},{"date":"2026-02-17","demand":926855,"atm":278705,"teller":648150,"deposits":522699,"salary":0,"festival":0},{"date":"2026-02-18","demand":841234,"atm":257702,"teller":583533,"deposits":602451,"salary":0,"festival":0},{"date":"2026-02-19","demand":588435,"atm":155404,"teller":433031,"deposits":649800,"salary":0,"festival":0},{"date":"2026-02-20","demand":938890,"atm":316164,"teller":622726,"deposits":745114,"salary":0,"festival":0},{"date":"2026-02-21","demand":753790,"atm":192511,"teller":561279,"deposits":695927,"salary":0,"festival":0},{"date":"2026-02-22","demand":718769,"atm":229891,"teller":488878,"deposits":815318,"salary":0,"festival":0},{"date":"2026-02-23","demand":873401,"atm":289442,"teller":583959,"deposits":523265,"salary":0,"festival":0},{"date":"2026-02-24","demand":923720,"atm":270633,"teller":653087,"deposits":687232,"salary":0,"festival":0},{"date":"2026-02-25","demand":911754,"atm":308743,"teller":603011,"deposits":618334,"salary":0,"festival":0},{"date":"2026-02-26","demand":699294,"atm":178023,"teller":521271,"deposits":818980,"salary":0,"festival":0},{"date":"2026-02-27","demand":862895,"atm":220558,"teller":642337,"deposits":519170,"salary":0,"festival":0},{"date":"2026-02-28","demand":1019752,"atm":380765,"teller":638986,"deposits":516028,"salary":1,"festival":0},{"date":"2026-03-01","demand":1097065,"atm":333539,"teller":763526,"deposits":540061,"salary":1,"festival":0},{"date":"2026-03-02","demand":922499,"atm":248207,"teller":674292,"deposits":387610,"salary":1,"festival":0},{"date":"2026-03-03","demand":957721,"atm":314455,"teller":643266,"deposits":547424,"salary":1,"festival":0},{"date":"2026-03-04","demand":667240,"atm":243876,"teller":423364,"deposits":524087,"salary":0,"festival":0},{"date":"2026-03-05","demand":656455,"atm":185365,"teller":471090,"deposits":615039,"salary":0,"festival":0},{"date":"2026-03-06","demand":997503,"atm":342576,"teller":654927,"deposits":634176,"salary":0,"festival":0},{"date":"2026-03-07","demand":962749,"atm":253012,"teller":709736,"deposits":787617,"salary":0,"festival":0},{"date":"2026-03-08","demand":791359,"atm":203975,"teller":587384,"deposits":695042,"salary":0,"festival":0},{"date":"2026-03-09","demand":920424,"atm":303467,"teller":616957,"deposits":542310,"salary":0,"festival":0},{"date":"2026-03-10","demand":1093396,"atm":362018,"teller":731378,"deposits":510159,"salary":0,"festival":1},{"date":"2026-03-11","demand":972586,"atm":336140,"teller":636446,"deposits":649192,"salary":0,"festival":1},{"date":"2026-03-12","demand":1093367,"atm":392425,"teller":700943,"deposits":467977,"salary":0,"festival":1},{"date":"2026-03-13","demand":1334564,"atm":528992,"teller":805573,"deposits":783146,"salary":0,"festival":1},{"date":"2026-03-14","demand":1045701,"atm":342410,"teller":703291,"deposits":717944,"salary":0,"festival":1},{"date":"2026-03-15","demand":1237757,"atm":369401,"teller":868357,"deposits":553082,"salary":0,"festival":1},{"date":"2026-03-16","demand":735631,"atm":271652,"teller":463978,"deposits":428687,"salary":0,"festival":1},{"date":"2026-03-17","demand":898628,"atm":261164,"teller":637465,"deposits":735387,"salary":0,"festival":0},{"date":"2026-03-18","demand":810446,"atm":255976,"teller":554470,"deposits":588546,"salary":0,"festival":0},{"date":"2026-03-19","demand":764119,"atm":200022,"teller":564097,"deposits":723782,"salary":0,"festival":0},{"date":"2026-03-20","demand":911011,"atm":231217,"teller":679794,"deposits":440557,"salary":0,"festival":0},{"date":"2026-03-21","demand":561492,"atm":221451,"teller":340041,"deposits":540062,"salary":0,"festival":0},{"date":"2026-03-22","demand":773639,"atm":290422,"teller":483217,"deposits":600524,"salary":0,"festival":0},{"date":"2026-03-23","demand":842854,"atm":298704,"teller":544149,"deposits":604698,"salary":0,"festival":0},{"date":"2026-03-24","demand":977347,"atm":304290,"teller":673057,"deposits":554993,"salary":0,"festival":0},{"date":"2026-03-25","demand":737808,"atm":203631,"teller":534177,"deposits":662285,"salary":0,"festival":0},{"date":"2026-03-26","demand":702981,"atm":192241,"teller":510740,"deposits":493238,"salary":0,"festival":0},{"date":"2026-03-27","demand":839789,"atm":241470,"teller":598319,"deposits":585762,"salary":0,"festival":0},{"date":"2026-03-28","demand":1089848,"atm":362248,"teller":727600,"deposits":612030,"salary":1,"festival":0},{"date":"2026-03-29","demand":1019450,"atm":364137,"teller":655313,"deposits":651444,"salary":1,"festival":0},{"date":"2026-03-30","demand":916429,"atm":319861,"teller":596568,"deposits":671161,"salary":1,"festival":0},{"date":"2026-03-31","demand":1041592,"atm":304135,"teller":737458,"deposits":487536,"salary":1,"festival":0},{"date":"2026-04-01","demand":991649,"atm":389946,"teller":601703,"deposits":446589,"salary":1,"festival":0},{"date":"2026-04-02","demand":1096237,"atm":395396,"teller":700842,"deposits":727768,"salary":1,"festival":0},{"date":"2026-04-03","demand":995754,"atm":331738,"teller":664015,"deposits":633231,"salary":1,"festival":0},{"date":"2026-04-04","demand":760681,"atm":259969,"teller":500712,"deposits":525151,"salary":0,"festival":0},{"date":"2026-04-05","demand":752947,"atm":235627,"teller":517320,"deposits":755115,"salary":0,"festival":0},{"date":"2026-04-06","demand":624378,"atm":179296,"teller":445082,"deposits":611567,"salary":0,"festival":0},{"date":"2026-04-07","demand":835534,"atm":253498,"teller":582037,"deposits":717930,"salary":0,"festival":0},{"date":"2026-04-08","demand":831327,"atm":302334,"teller":528992,"deposits":606752,"salary":0,"festival":0},{"date":"2026-04-09","demand":800614,"atm":201882,"teller":598732,"deposits":806075,"salary":0,"festival":0},{"date":"2026-04-10","demand":871850,"atm":233142,"teller":638707,"deposits":775534,"salary":0,"festival":0},{"date":"2026-04-11","demand":630156,"atm":161887,"teller":468268,"deposits":575104,"salary":0,"festival":0},{"date":"2026-04-12","demand":749523,"atm":191960,"teller":557563,"deposits":697157,"salary":0,"festival":0},{"date":"2026-04-13","demand":758874,"atm":287097,"teller":471778,"deposits":664538,"salary":0,"festival":0},{"date":"2026-04-14","demand":703727,"atm":250209,"teller":453518,"deposits":736863,"salary":0,"festival":0},{"date":"2026-04-15","demand":780646,"atm":250686,"teller":529960,"deposits":503508,"salary":0,"festival":0},{"date":"2026-04-16","demand":848486,"atm":224573,"teller":623913,"deposits":668605,"salary":0,"festival":0},{"date":"2026-04-17","demand":1126342,"atm":364645,"teller":761698,"deposits":705842,"salary":0,"festival":0},{"date":"2026-04-18","demand":820949,"atm":263542,"teller":557408,"deposits":424126,"salary":0,"festival":0},{"date":"2026-04-19","demand":830906,"atm":229314,"teller":601592,"deposits":481674,"salary":0,"festival":0},{"date":"2026-04-20","demand":791066,"atm":249247,"teller":541819,"deposits":396077,"salary":0,"festival":0},{"date":"2026-04-21","demand":569747,"atm":176494,"teller":393254,"deposits":573059,"salary":0,"festival":0},{"date":"2026-04-22","demand":796818,"atm":272813,"teller":524006,"deposits":671754,"salary":0,"festival":0},{"date":"2026-04-23","demand":807228,"atm":278707,"teller":528521,"deposits":750236,"salary":0,"festival":0},{"date":"2026-04-24","demand":1195589,"atm":307022,"teller":888567,"deposits":607409,"salary":0,"festival":0},{"date":"2026-04-25","demand":776917,"atm":237886,"teller":539031,"deposits":762862,"salary":0,"festival":0},{"date":"2026-04-26","demand":836186,"atm":287547,"teller":548639,"deposits":461990,"salary":0,"festival":0},{"date":"2026-04-27","demand":795835,"atm":259021,"teller":536814,"deposits":429662,"salary":0,"festival":0},{"date":"2026-04-28","demand":839759,"atm":317826,"teller":521932,"deposits":594445,"salary":1,"festival":0},{"date":"2026-04-29","demand":1117139,"atm":389663,"teller":727476,"deposits":638407,"salary":1,"festival":0},{"date":"2026-04-30","demand":1070232,"atm":293715,"teller":776517,"deposits":596731,"salary":1,"festival":0},{"date":"2026-05-01","demand":1424924,"atm":371314,"teller":1053610,"deposits":393256,"salary":1,"festival":1},{"date":"2026-05-02","demand":1120874,"atm":388229,"teller":732645,"deposits":591088,"salary":1,"festival":1},{"date":"2026-05-03","demand":1398335,"atm":355145,"teller":1043191,"deposits":469553,"salary":1,"festival":1},{"date":"2026-05-04","demand":881778,"atm":297923,"teller":583855,"deposits":666967,"salary":0,"festival":1},{"date":"2026-05-05","demand":1120423,"atm":438124,"teller":682299,"deposits":636660,"salary":0,"festival":1},{"date":"2026-05-06","demand":1312855,"atm":441541,"teller":871314,"deposits":506012,"salary":0,"festival":1},{"date":"2026-05-07","demand":931136,"atm":287000,"teller":644136,"deposits":548613,"salary":0,"festival":1},{"date":"2026-05-08","demand":832044,"atm":288298,"teller":543747,"deposits":494079,"salary":0,"festival":0},{"date":"2026-05-09","demand":811958,"atm":258802,"teller":553156,"deposits":593732,"salary":0,"festival":0},{"date":"2026-05-10","demand":739583,"atm":245425,"teller":494158,"deposits":695514,"salary":0,"festival":0},{"date":"2026-05-11","demand":613920,"atm":240178,"teller":373743,"deposits":501427,"salary":0,"festival":0},{"date":"2026-05-12","demand":808228,"atm":248866,"teller":559362,"deposits":650405,"salary":0,"festival":0},{"date":"2026-05-13","demand":672524,"atm":265094,"teller":407429,"deposits":546974,"salary":0,"festival":0},{"date":"2026-05-14","demand":856831,"atm":330568,"teller":526263,"deposits":520713,"salary":0,"festival":0},{"date":"2026-05-15","demand":789669,"atm":220609,"teller":569060,"deposits":589297,"salary":0,"festival":0},{"date":"2026-05-16","demand":985992,"atm":256756,"teller":729236,"deposits":496476,"salary":0,"festival":0},{"date":"2026-05-17","demand":706010,"atm":187175,"teller":518835,"deposits":544635,"salary":0,"festival":0},{"date":"2026-05-18","demand":761353,"atm":192419,"teller":568933,"deposits":480212,"salary":0,"festival":0},{"date":"2026-05-19","demand":897622,"atm":237122,"teller":660500,"deposits":796473,"salary":0,"festival":0},{"date":"2026-05-20","demand":652296,"atm":229902,"teller":422394,"deposits":603526,"salary":0,"festival":0},{"date":"2026-05-21","demand":827295,"atm":215658,"teller":611637,"deposits":530027,"salary":0,"festival":0},{"date":"2026-05-22","demand":1056857,"atm":314781,"teller":742076,"deposits":621398,"salary":0,"festival":0},{"date":"2026-05-23","demand":607102,"atm":228714,"teller":378388,"deposits":588767,"salary":0,"festival":0},{"date":"2026-05-24","demand":822156,"atm":208409,"teller":613747,"deposits":577903,"salary":0,"festival":0},{"date":"2026-05-25","demand":831186,"atm":309343,"teller":521843,"deposits":661417,"salary":0,"festival":0},{"date":"2026-05-26","demand":893819,"atm":261244,"teller":632575,"deposits":675751,"salary":0,"festival":0},{"date":"2026-05-27","demand":651566,"atm":174440,"teller":477126,"deposits":546950,"salary":0,"festival":0},{"date":"2026-05-28","demand":821545,"atm":291246,"teller":530299,"deposits":542418,"salary":1,"festival":0},{"date":"2026-05-29","demand":1142633,"atm":393456,"teller":749177,"deposits":572495,"salary":1,"festival":0},{"date":"2026-05-30","demand":1015638,"atm":387589,"teller":628050,"deposits":369808,"salary":1,"festival":0},{"date":"2026-05-31","demand":1010059,"atm":363885,"teller":646175,"deposits":448481,"salary":1,"festival":0},{"date":"2026-06-01","demand":1021574,"atm":378516,"teller":643058,"deposits":736687,"salary":1,"festival":0},{"date":"2026-06-02","demand":898397,"atm":262606,"teller":635791,"deposits":764497,"salary":1,"festival":0},{"date":"2026-06-03","demand":1007870,"atm":278793,"teller":729077,"deposits":575096,"salary":1,"festival":0},{"date":"2026-06-04","demand":835169,"atm":302826,"teller":532343,"deposits":657656,"salary":0,"festival":0},{"date":"2026-06-05","demand":814278,"atm":302118,"teller":512160,"deposits":631125,"salary":0,"festival":0},{"date":"2026-06-06","demand":1023893,"atm":408099,"teller":615794,"deposits":907888,"salary":0,"festival":0},{"date":"2026-06-07","demand":856860,"atm":267248,"teller":589612,"deposits":711957,"salary":0,"festival":0},{"date":"2026-06-08","demand":657044,"atm":200926,"teller":456118,"deposits":587208,"salary":0,"festival":0},{"date":"2026-06-09","demand":878786,"atm":322042,"teller":556745,"deposits":504446,"salary":0,"festival":0},{"date":"2026-06-10","demand":683038,"atm":205677,"teller":477361,"deposits":439355,"salary":0,"festival":0},{"date":"2026-06-11","demand":894450,"atm":348490,"teller":545960,"deposits":620346,"salary":0,"festival":0},{"date":"2026-06-12","demand":1039031,"atm":393546,"teller":645486,"deposits":524365,"salary":0,"festival":0},{"date":"2026-06-13","demand":701518,"atm":220522,"teller":480997,"deposits":457775,"salary":0,"festival":0},{"date":"2026-06-14","demand":915605,"atm":332026,"teller":583579,"deposits":535343,"salary":0,"festival":0},{"date":"2026-06-15","demand":849534,"atm":308535,"teller":540999,"deposits":491845,"salary":0,"festival":0},{"date":"2026-06-16","demand":898647,"atm":238563,"teller":660085,"deposits":768714,"salary":0,"festival":0},{"date":"2026-06-17","demand":1027615,"atm":396025,"teller":631590,"deposits":688164,"salary":0,"festival":0},{"date":"2026-06-18","demand":770553,"atm":251037,"teller":519516,"deposits":599203,"salary":0,"festival":0},{"date":"2026-06-19","demand":809552,"atm":302747,"teller":506805,"deposits":747994,"salary":0,"festival":0},{"date":"2026-06-20","demand":693258,"atm":206596,"teller":486662,"deposits":607737,"salary":0,"festival":0},{"date":"2026-06-21","demand":702103,"atm":269838,"teller":432265,"deposits":513872,"salary":0,"festival":0},{"date":"2026-06-22","demand":790748,"atm":243851,"teller":546897,"deposits":752312,"salary":0,"festival":0},{"date":"2026-06-23","demand":840938,"atm":211602,"teller":629337,"deposits":653891,"salary":0,"festival":0},{"date":"2026-06-24","demand":833203,"atm":321456,"teller":511747,"deposits":496275,"salary":0,"festival":0},{"date":"2026-06-25","demand":899262,"atm":237129,"teller":662133,"deposits":580966,"salary":0,"festival":0},{"date":"2026-06-26","demand":901560,"atm":268572,"teller":632988,"deposits":512438,"salary":0,"festival":0},{"date":"2026-06-27","demand":974424,"atm":382471,"teller":591954,"deposits":461720,"salary":0,"festival":0},{"date":"2026-06-28","demand":948241,"atm":372271,"teller":575970,"deposits":692618,"salary":1,"festival":0},{"date":"2026-06-29","demand":1306420,"atm":438978,"teller":867443,"deposits":790942,"salary":1,"festival":0}];
+
+const labels = dataset.map(x => x.date);
+const demand = dataset.map(x => x.demand);
+const atm = dataset.map(x => x.atm);
+const teller = dataset.map(x => x.teller);
+
+new Chart(document.getElementById('demandChart'), {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Cash Demand (₹)',
+      data: demand,
+      borderColor: '#4f46e5',
+      backgroundColor: 'rgba(79,70,229,.08)',
+      fill: true,
+      tension: .25,
+      pointRadius: 0
+    }]
+  },
+  options: { responsive:true, maintainAspectRatio:false,
+    plugins: { legend: { display:false } },
+    scales: { y: { beginAtZero:false, ticks: { callback:v=>'₹'+Number(v).toLocaleString() } } }
+  }
+});
+
+new Chart(document.getElementById('cashChart'), {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label:'ATM Cash', data:atm, borderColor:'#2563eb', pointRadius:0, tension:.2 },
+      { label:'Teller Cash', data:teller, borderColor:'#9333ea', pointRadius:0, tension:.2 }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false,
+    scales: { y: { beginAtZero:false, ticks: { callback:v=>'₹'+Number(v).toLocaleString() } } }
+  }
+});
+
+new Chart(document.getElementById('featureChart'), {
+  type:'bar',
+  data:{
+    labels:['Teller Cash','ATM Cash','7-Day Moving Avg','Deposits','Month','Day of Month','Day of Week','Festival Flag','Salary Flag'],
+    datasets:[{ label:'Importance', data:[0.814329,0.165502,0.007071,0.005053,0.002875,0.002657,0.001678,0.000507,0.000327], backgroundColor:'#4f46e5' }]
+  },
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{beginAtZero:true}}
+  }
+});
+</script>
+</body>
+</html>
